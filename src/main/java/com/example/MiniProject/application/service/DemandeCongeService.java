@@ -54,7 +54,7 @@ public class DemandeCongeService {
 
 
         //mise a jour du solde congé
-        Utilisateur user = utilisateurRepository.findById(demande.getEmplyeId()).orElseThrow();
+        Utilisateur user = utilisateurRepository.findById(demande.getEmployeId()).orElseThrow();
         long nbJours = ChronoUnit.DAYS.between(demande.getDateDebut(), demande.getDateFin()) + 1;
         user.setSoldeConges(user.getSoldeConges() -(int) nbJours);
         utilisateurRepository.save(user);
@@ -87,7 +87,7 @@ public class DemandeCongeService {
         historiqueActionRepository.save(historiqueAction);
 
         //Notification
-        Utilisateur user = utilisateurRepository.findById(demande.getEmplyeId()).orElseThrow();
+        Utilisateur user = utilisateurRepository.findById(demande.getEmployeId()).orElseThrow();
         emailService.envoyerNotification(user.getEmail() , "demande de congé refusée" , " Votre demande de congée a été refusée");
         return mapper.toDTO(saved);
     }
@@ -96,7 +96,7 @@ public class DemandeCongeService {
         List<Utilisateur> employes =utilisateurRepository.findByManagerId(managerId);
         List<Long> employeIds =employes.stream().map(Utilisateur::getId).toList();
 
-        return demandeCongeRepository.findAll().stream().filter(d -> employeIds.contains(d.getEmplyeId())).map(mapper::toDTO).collect(Collectors.toList());
+        return demandeCongeRepository.findAll().stream().filter(d -> employeIds.contains(d.getEmployeId())).map(mapper::toDTO).collect(Collectors.toList());
     }
 
 }

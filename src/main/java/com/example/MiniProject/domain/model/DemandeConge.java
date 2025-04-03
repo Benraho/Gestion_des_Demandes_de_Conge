@@ -17,11 +17,12 @@ public class DemandeConge {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long emplyeId;
+    private Long employeId;
     private LocalDate dateDebut;
     private LocalDate dateFin;
     private String status = "EN_ATTENTE";
     private LocalDateTime dateCreation = LocalDateTime.now();
+    private String raison;
 
     public LocalDateTime getDateCreation() {
         return dateCreation;
@@ -37,6 +38,14 @@ public class DemandeConge {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getRaison() {
+        return raison;
+    }
+
+    public void setRaison(String raison) {
+        this.raison = raison;
     }
 
     public LocalDate getDateFin() {
@@ -55,12 +64,12 @@ public class DemandeConge {
         this.dateDebut = dateDebut;
     }
 
-    public Long getEmplyeId() {
-        return emplyeId;
+    public Long getEmployeId() {
+        return employeId;
     }
 
-    public void setEmplyeId(Long emplyeId) {
-        this.emplyeId = emplyeId;
+    public void setEmployeId(Long emplyeId) {
+        this.employeId = emplyeId;
     }
 
     public Long getId() {

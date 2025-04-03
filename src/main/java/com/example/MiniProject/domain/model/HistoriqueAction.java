@@ -16,7 +16,7 @@ public class HistoriqueAction {
     private Long id;
 
     private Long demandeId;
-    private Long mangerId;
+    private Long managerId;
     private String action;
 
     public Long getId() {
@@ -35,12 +35,12 @@ public class HistoriqueAction {
         this.demandeId = demandeId;
     }
 
-    public Long getMangerId() {
-        return mangerId;
+    public Long getManagerId() {
+        return managerId;
     }
 
-    public void setMangerId(Long mangerId) {
-        this.mangerId = mangerId;
+    public void setMangerId(Long managerId) {
+        this.managerId = managerId;
     }
 
     public String getAction() {
