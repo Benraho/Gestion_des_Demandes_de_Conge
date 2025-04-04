@@ -36,7 +36,7 @@ public class DemandeCongeController {
         return demandeCongeService.refuserDemande(id);
     }
 
-    @GetMapping("/solde/{id")
+    @GetMapping("/solde/{id}")
     public int getSoldeConges(@PathVariable Long id){
         return utilisateurRepository.findById(id).map(Utilisateur::getSoldeConges).orElse(0);
     }
