@@ -11,11 +11,11 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret}")
+    @Value("${spring.security.jwt.secret}")
     private String secret;
 
-    @Value("${jwt.expiration}")
-    private String expiration;
+    @Value("${spring.security.jwt.expiration}")
+    private Long expiration;
 
     public  String genrateToken(String email){
         Date now = new Date();

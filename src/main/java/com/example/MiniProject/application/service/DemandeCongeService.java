@@ -10,7 +10,6 @@ import com.example.MiniProject.infrastructure.repository.HistoriqueActionReposit
 import com.example.MiniProject.infrastructure.repository.UtilisateurRepository;
 import com.example.MiniProject.infrastructure.security.EmailService;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.Mapper;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;

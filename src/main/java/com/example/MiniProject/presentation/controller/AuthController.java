@@ -1,10 +1,14 @@
 package com.example.MiniProject.presentation.controller;
 
 
+import com.example.MiniProject.application.dto.LoginRequestDTO;
 import com.example.MiniProject.domain.model.Role;
 import com.example.MiniProject.domain.model.Utilisateur;
 import com.example.MiniProject.infrastructure.repository.UtilisateurRepository;
 import com.example.MiniProject.infrastructure.security.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,10 +36,16 @@ public class AuthController {
         return "Inscription réussite";
     }
 
-    public String login(@RequestBody Utilisateur utilisateur){
-        Utilisateur user = utilisateurRepository.findByEmail(utilisateur.getEmail())
+    @PostMapping("/login")
+    @Operation(summary = "Connexion utilisateur")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200" , description = "Connexion réussite"),
+            @ApiResponse(responseCode = "403" , description = "Utilisateur non trouvé ou mot de passe incorrect")
+    })
+    public String login(@RequestBody LoginRequestDTO loginRequestDTO){
+        Utilisateur user = utilisateurRepository.findByEmail(loginRequestDTO.getEmail())
                 .orElseThrow(()-> new RuntimeException("Utilisateur non trouvé"));
-        if (new BCryptPasswordEncoder().matches(utilisateur.getMotDePasse(),user.getMotDePasse())){
+        if (new BCryptPasswordEncoder().matches(loginRequestDTO.getMotDePasse(),user.getMotDePasse())){
             return jwtService.genrateToken(user.getEmail());
         }
         throw  new RuntimeException("Mot de passe incorrect");
