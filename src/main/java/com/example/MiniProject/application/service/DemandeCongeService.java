@@ -24,13 +24,15 @@ public class DemandeCongeService {
     private final UtilisateurRepository utilisateurRepository;
     private final HistoriqueActionRepository historiqueActionRepository;
     private final EmailService emailService;
+    private final HistoriqueActionService historiqueActionService;
 
-    public DemandeCongeService(DemandeCongeRepository demandeCongeRepository, DemandeCongeMapper mapper, UtilisateurRepository utilisateurRepository, HistoriqueActionRepository historiqueActionRepository, EmailService emailService) {
+    public DemandeCongeService(DemandeCongeRepository demandeCongeRepository, DemandeCongeMapper mapper, UtilisateurRepository utilisateurRepository, HistoriqueActionRepository historiqueActionRepository, EmailService emailService, HistoriqueActionService historiqueActionService) {
         this.demandeCongeRepository = demandeCongeRepository;
         this.mapper = mapper;
         this.utilisateurRepository = utilisateurRepository;
         this.historiqueActionRepository = historiqueActionRepository;
         this.emailService = emailService;
+        this.historiqueActionService = historiqueActionService;
     }
 
     public DemandeCongeDTO creeDemande(DemandeCongeDTO dto){
@@ -59,11 +61,7 @@ public class DemandeCongeService {
         utilisateurRepository.save(user);
 
         //Historique
-        HistoriqueAction historiqueAction= new HistoriqueAction();
-        historiqueAction.setDemandeId(demande.getId());
-        historiqueAction.setMangerId(1L);
-        historiqueAction.setAction("APPROUVE");
-        historiqueActionRepository.save(historiqueAction);
+        historiqueActionService.enregistrerHistorique(demande.getId(), "APPROUVE", 1L);
 
         //Notification
         emailService.envoyerNotification(user.getEmail(),
@@ -81,9 +79,10 @@ public class DemandeCongeService {
         //historique
         HistoriqueAction historiqueAction = new HistoriqueAction();
         historiqueAction.setDemandeId(demande.getId());
-        historiqueAction.setMangerId(1L);
+        historiqueAction.setManagerId(1L);
         historiqueAction.setAction("REFUSE");
         historiqueActionRepository.save(historiqueAction);
+
 
         //Notification
         Utilisateur user = utilisateurRepository.findById(demande.getEmployeId()).orElseThrow();

@@ -18,6 +18,7 @@ public class HistoriqueAction {
     private Long demandeId;
     private Long managerId;
     private String action;
+    private LocalDateTime dateAction =LocalDateTime.now();
 
     public Long getId() {
         return id;
@@ -39,7 +40,7 @@ public class HistoriqueAction {
         return managerId;
     }
 
-    public void setMangerId(Long managerId) {
+    public void setManagerId(Long managerId) {
         this.managerId = managerId;
     }
 
@@ -58,7 +59,5 @@ public class HistoriqueAction {
     public void setDateAction(LocalDateTime dateAction) {
         this.dateAction = dateAction;
     }
-
-    private LocalDateTime dateAction =LocalDateTime.now();
 
 }
