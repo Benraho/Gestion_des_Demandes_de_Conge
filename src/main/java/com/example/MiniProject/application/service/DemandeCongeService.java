@@ -4,6 +4,7 @@ import com.example.MiniProject.application.dto.DemandeCongeDTO;
 import com.example.MiniProject.application.mapper.DemandeCongeMapper;
 import com.example.MiniProject.domain.model.DemandeConge;
 import com.example.MiniProject.domain.model.HistoriqueAction;
+import com.example.MiniProject.domain.model.StatusDemande;
 import com.example.MiniProject.domain.model.Utilisateur;
 import com.example.MiniProject.infrastructure.repository.DemandeCongeRepository;
 import com.example.MiniProject.infrastructure.repository.HistoriqueActionRepository;
@@ -25,20 +26,34 @@ public class DemandeCongeService {
     private final HistoriqueActionRepository historiqueActionRepository;
     private final EmailService emailService;
     private final HistoriqueActionService historiqueActionService;
+    private final DemandeCongeMapper demandeCongeMapper;
 
-    public DemandeCongeService(DemandeCongeRepository demandeCongeRepository, DemandeCongeMapper mapper, UtilisateurRepository utilisateurRepository, HistoriqueActionRepository historiqueActionRepository, EmailService emailService, HistoriqueActionService historiqueActionService) {
+
+    public DemandeCongeService(DemandeCongeRepository demandeCongeRepository, DemandeCongeMapper mapper, UtilisateurRepository utilisateurRepository, HistoriqueActionRepository historiqueActionRepository, EmailService emailService, HistoriqueActionService historiqueActionService, DemandeCongeMapper demandeCongeMapper) {
         this.demandeCongeRepository = demandeCongeRepository;
         this.mapper = mapper;
         this.utilisateurRepository = utilisateurRepository;
         this.historiqueActionRepository = historiqueActionRepository;
         this.emailService = emailService;
         this.historiqueActionService = historiqueActionService;
+        this.demandeCongeMapper = demandeCongeMapper;
     }
 
     public DemandeCongeDTO creeDemande(DemandeCongeDTO dto){
         DemandeConge entity = mapper.toEntity(dto);
         entity.setStatus("EN_ATTENTE");
         return mapper.toDTO(demandeCongeRepository.save(entity));
+    }
+
+    public DemandeCongeDTO AnnulerDemande(Long id){
+        DemandeConge demande = demandeCongeRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("Demande non trouvée"));
+        if(!demande.getStatus().equals("ATTENTE")) {
+            throw new RuntimeException("Impossible d'annuler une demande déja traitée");
+        }
+        demande.setStatus(String.valueOf(StatusDemande.ANNULEE));
+        demandeCongeRepository.save(demande);
+        return demandeCongeMapper.toDTO(demande);
     }
 
     public List<DemandeCongeDTO> getDamandesByEmploye(Long employeId){

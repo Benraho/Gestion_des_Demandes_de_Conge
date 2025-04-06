@@ -26,6 +26,11 @@ public class DemandeCongeController {
         return demandeCongeService.creeDemande(dto);
     }
 
+    @PutMapping("/annuler/{id}")
+    public DemandeCongeDTO annulerDemandeConge(@PathVariable Long id){
+        return demandeCongeService.AnnulerDemande(id);
+    }
+
     @GetMapping("/employe/{id} ")
     public List<DemandeCongeDTO> getDemandesEmploye(@PathVariable Long id){
         return demandeCongeService.getDamandesByEmploye(id);
