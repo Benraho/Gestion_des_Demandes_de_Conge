@@ -2,14 +2,17 @@ package com.example.MiniProject.presentation.controller;
 
 
 import com.example.MiniProject.application.service.AdminService;
+import com.example.MiniProject.domain.model.DemandeConge;
 import com.example.MiniProject.domain.model.Role;
 import com.example.MiniProject.domain.model.Utilisateur;
-import com.example.MiniProject.infrastructure.repository.UtilisateurRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,7 +25,7 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    //cree un utilisateur
+    //crée un utilisateur
     @PostMapping("/users")
     public Utilisateur createUser(@RequestBody Utilisateur user){
         return adminService.createUser(user);
@@ -47,4 +50,19 @@ public class AdminController {
         adminService.updateUserRole(id , role);
         return "Role mis à jour";
     }
+
+
+    @GetMapping("/conges-par-service")
+    public Map<String, Long> getCongesParService() {
+        return adminService.getCongesParService();
+    }
+
+    @GetMapping("/conges-par-periode")
+    public List<DemandeConge> getCongesParPeriode(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE
+
+    ) LocalDate dateDebut , @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate dateFin){
+        return adminService.getCongesParPeriode(dateDebut , dateFin);
+    }
+
+
 }

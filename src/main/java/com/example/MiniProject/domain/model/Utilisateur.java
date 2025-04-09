@@ -18,6 +18,7 @@ public class Utilisateur {
     private String email;
     private String motDePasse;
     private int soldeConges = 30;
+    private String service;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -91,5 +92,13 @@ public class Utilisateur {
 
     public void setManager(Utilisateur manager) {
         this.manager = manager;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
     }
 }

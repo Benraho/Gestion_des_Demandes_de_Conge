@@ -14,11 +14,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DemandeCongeController {
     private final DemandeCongeService demandeCongeService;
-    private final UtilisateurRepository utilisateurRepository;
 
     public DemandeCongeController(DemandeCongeService demandeCongeService, UtilisateurRepository utilisateurRepository) {
         this.demandeCongeService = demandeCongeService;
-        this.utilisateurRepository = utilisateurRepository;
     }
 
     @PostMapping
@@ -36,13 +34,14 @@ public class DemandeCongeController {
         return demandeCongeService.getDamandesByEmploye(id);
     }
 
-    @PutMapping("/approuver/{id}")
-    public DemandeCongeDTO refuser(@PathVariable Long id ){
-        return demandeCongeService.refuserDemande(id);
+    @GetMapping("/manager/{id} ")
+    public List<DemandeCongeDTO> getDemandesByManager(@PathVariable Long id){
+        return demandeCongeService.getDemandesByManager(id);
     }
 
     @GetMapping("/solde/{id}")
     public int getSoldeConges(@PathVariable Long id){
-        return utilisateurRepository.findById(id).map(Utilisateur::getSoldeConges).orElse(0);
+        return demandeCongeService.getSoldeConges(id);
     }
+
 }

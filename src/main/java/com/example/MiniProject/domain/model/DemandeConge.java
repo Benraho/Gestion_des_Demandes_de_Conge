@@ -23,6 +23,7 @@ public class DemandeConge {
     private String status = "EN_ATTENTE";
     private LocalDateTime dateCreation = LocalDateTime.now();
     private String raison;
+    private Utilisateur employe;
 
     public LocalDateTime getDateCreation() {
         return dateCreation;
@@ -80,4 +81,11 @@ public class DemandeConge {
         this.id = id;
     }
 
+    public Utilisateur getEmploye() {
+        return employe;
+    }
+
+    public void setEmploye(Utilisateur employe) {
+        this.employe = employe;
+    }
 }
