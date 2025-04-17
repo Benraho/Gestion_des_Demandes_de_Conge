@@ -47,7 +47,7 @@ public class DemandeCongeService {
     public DemandeCongeDTO AnnulerDemande(Long id){
         DemandeConge demande = demandeCongeRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Demande non trouvée"));
-        if(!demande.getStatus().equals("ATTENTE")) {
+        if(!demande.getStatus().equals("EN_ATTENTE")) {
             throw new RuntimeException("Impossible d'annuler une demande déja traitée");
         }
         demande.setStatus(String.valueOf(StatusDemande.ANNULEE));

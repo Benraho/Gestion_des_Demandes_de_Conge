@@ -11,6 +11,7 @@ public class DemandeCongeDTO {
     private LocalDate dateFin;
     private String statut;
     private Long employeId;
+    private String raison;
 
     public Long getEmployeId() {
         return employeId;
@@ -52,5 +53,11 @@ public class DemandeCongeDTO {
         this.id = id;
     }
 
+    public String getRaison() {
+        return raison;
+    }
 
+    public void setRaison(String raison) {
+        this.raison = raison;
+    }
 }

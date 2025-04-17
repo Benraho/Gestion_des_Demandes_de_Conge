@@ -1,7 +1,7 @@
 package com.example.MiniProject.domain.model;
 
 public enum StatusDemande {
-    ATTENTE,
+    EN_ATTENTE,
     APPROUVE,
     REFUSEE,
     ANNULEE
