@@ -3,8 +3,11 @@ package com.example.MiniProject.application.service;
 import com.example.MiniProject.application.dto.DemandeCongeDTO;
 import com.example.MiniProject.application.mapper.DemandeCongeMapper;
 import com.example.MiniProject.domain.model.DemandeConge;
+import com.example.MiniProject.domain.model.HistoriqueAction;
+import com.example.MiniProject.domain.model.StatusDemande;
 import com.example.MiniProject.domain.model.Utilisateur;
 import com.example.MiniProject.infrastructure.repository.DemandeCongeRepository;
+import com.example.MiniProject.infrastructure.repository.HistoriqueActionRepository;
 import com.example.MiniProject.infrastructure.repository.UtilisateurRepository;
 import com.example.MiniProject.infrastructure.security.EmailService;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +17,7 @@ import org.mockito.Mock;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -39,6 +43,9 @@ public class DemandeCongeServiceTest {
 
     @Mock
     private EmailService emailService;
+
+    @Mock
+    private HistoriqueActionRepository historiqueActionRepository;
 
     @BeforeEach
     public void setUp() {
@@ -68,23 +75,6 @@ public class DemandeCongeServiceTest {
     }
 
     @Test
-    void testGetDemandesByEmploye() {
-        Utilisateur employe = new Utilisateur();
-        employe.setId(1L);
-
-        DemandeConge demande = new DemandeConge();
-        demande.setId(1L);
-        demande.setEmploye(employe);
-        demande.setStatus("EN_ATTENTE");
-
-        when(demandeCongeRepository.findByEmployeId(1L)).thenReturn(Collections.singletonList(demande));
-
-        var result = demandeCongeService.getDamandesByEmploye(1L);
-        assertEquals(1, result.size());
-        verify(demandeCongeRepository, times(1)).findByEmployeId(1L);
-    }
-
-    @Test
     void testAnnulerDemande() {
         Long demandeId = 1L;
 
@@ -105,6 +95,24 @@ public class DemandeCongeServiceTest {
         assertEquals(demandeId, result.getId());
         verify(demandeCongeRepository, times(1)).save(demande);
     }
+
+    @Test
+    void testGetDemandesByEmploye() {
+        Utilisateur employe = new Utilisateur();
+        employe.setId(1L);
+
+        DemandeConge demande = new DemandeConge();
+        demande.setId(1L);
+        demande.setEmploye(employe);
+        demande.setStatus("EN_ATTENTE");
+
+        when(demandeCongeRepository.findByEmployeId(1L)).thenReturn(Collections.singletonList(demande));
+
+        var result = demandeCongeService.getDamandesByEmploye(1L);
+        assertEquals(1, result.size());
+        verify(demandeCongeRepository, times(1)).findByEmployeId(1L);
+    }
+
 
     @Test
     void testApprouverDemande() {
@@ -139,5 +147,124 @@ public class DemandeCongeServiceTest {
         verify(historiqueActionService, times(1)).enregistrerHistorique(demandeId, "APPROUVE", 1L);
         verify(emailService, times(1)).envoyerNotification("test@email.com",
                 "Demande de congé approuvée", "Votre demande de congé a été approuvée");
+    }
+
+    @Test
+    void testRefuserDemande() {
+        Long demandeId = 1L;
+        Long employeId = 2L;
+        String email = "employe@example.com";
+
+        DemandeConge demande = new DemandeConge();
+        demande.setId(demandeId);
+        demande.setEmployeId(employeId);
+
+        Utilisateur employe = new Utilisateur();
+        employe.setId(employeId);
+        employe.setEmail(email);
+
+        DemandeCongeDTO dto = new DemandeCongeDTO();
+
+        // Simuler les comportements
+        when(demandeCongeRepository.findById(demandeId)).thenReturn(java.util.Optional.of(demande));
+        when(utilisateurRepository.findById(employeId)).thenReturn(java.util.Optional.of(employe));
+        when(demandeCongeRepository.save(any(DemandeConge.class))).thenReturn(demande);
+        when(demandeCongeMapper.toDTO(demande)).thenReturn(dto);
+
+        DemandeCongeDTO result = demandeCongeService.refuserDemande(demandeId);
+
+        assertNotNull(result);
+        verify(historiqueActionRepository, times(1)).save(any(HistoriqueAction.class));
+        verify(emailService, times(1)).envoyerNotification(eq(email), contains("refusée"), anyString());
+    }
+
+    @Test
+    void testGetDemandesByManager() {
+        Long managerId = 1L;
+
+        // Simule deux employés sous le même manager
+        Utilisateur employe1 = new Utilisateur();
+        employe1.setId(10L);
+        Utilisateur employe2 = new Utilisateur();
+        employe2.setId(20L);
+
+        // Simule deux demandes de congés
+        DemandeConge conge1 = new DemandeConge();
+        conge1.setId(100L);
+        conge1.setEmployeId(10L);
+
+        DemandeConge conge2 = new DemandeConge();
+        conge2.setId(200L);
+        conge2.setEmployeId(20L);
+
+        // Retourne les employés du manager
+        when(utilisateurRepository.findByManagerId(managerId)).thenReturn(List.of(employe1, employe2));
+
+        // Retourne toutes les demandes
+        when(demandeCongeRepository.findAll()).thenReturn(List.of(conge1, conge2));
+
+        // Mapper les demandes
+        when(demandeCongeMapper.toDTO(any(DemandeConge.class)))
+                .thenAnswer(invocation -> {
+                    DemandeConge d = invocation.getArgument(0);
+                    DemandeCongeDTO dto = new DemandeCongeDTO();
+                    dto.setId(d.getId());
+                    dto.setEmployeId(d.getEmployeId());
+                    return dto;
+                });
+
+        var result = demandeCongeService.getDemandesByManager(managerId);
+
+        assertEquals(2, result.size());
+        verify(utilisateurRepository, times(1)).findByManagerId(managerId);
+        verify(demandeCongeRepository, times(1)).findAll();
+    }
+    @Test
+    void testGetSoldeConges() {
+        Long employeId = 1L;
+        Utilisateur utilisateur = new Utilisateur();
+        utilisateur.setId(employeId);
+        utilisateur.setSoldeConges(12); // solde simulé
+
+        when(utilisateurRepository.findById(employeId)).thenReturn(java.util.Optional.of(utilisateur));
+
+        int solde = demandeCongeService.getSoldeConges(employeId);
+
+        assertEquals(12, solde);
+        verify(utilisateurRepository, times(1)).findById(employeId);
+    }
+
+    @Test
+    void testGetCongesApprouvesByManager() {
+        Long managerId = 1L;
+
+        // Simuler un employé sous ce manager
+        Utilisateur employe = new Utilisateur();
+        Utilisateur manager = new Utilisateur();
+        manager.setId(managerId);
+        employe.setId(2L);
+        employe.setManager(manager);
+
+        // Simuler une demande de congé approuvée
+        DemandeConge demande = new DemandeConge();
+        demande.setId(10L);
+        demande.setEmploye(employe);
+        demande.setStatus(StatusDemande.APPROUVE.name());
+
+        // DTO attendu
+        DemandeCongeDTO dto = new DemandeCongeDTO();
+        dto.setId(10L);
+
+        // Mock des dépendances
+        when(utilisateurRepository.findByManagerId(managerId)).thenReturn(List.of(employe));
+        when(demandeCongeRepository.findByEmployeAndStatut(employe, StatusDemande.APPROUVE)).thenReturn(List.of(demande));
+        when(demandeCongeMapper.toDTO(demande)).thenReturn(dto);
+
+        List<DemandeCongeDTO> result = demandeCongeService.getCongesApprouvesByManager(managerId);
+
+        assertEquals(1, result.size());
+        assertEquals(10L, result.get(0).getId());
+        verify(utilisateurRepository, times(1)).findByManagerId(managerId);
+        verify(demandeCongeRepository, times(1)).findByEmployeAndStatut(employe, StatusDemande.APPROUVE);
     }
 }
