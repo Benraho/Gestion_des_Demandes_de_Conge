@@ -2,8 +2,6 @@ package com.example.MiniProject.presentation.controller;
 
 import com.example.MiniProject.application.dto.DemandeCongeDTO;
 import com.example.MiniProject.application.service.DemandeCongeService;
-import com.example.MiniProject.domain.model.Utilisateur;
-import com.example.MiniProject.infrastructure.repository.UtilisateurRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,11 +9,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/conges")
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class DemandeCongeController {
     private final DemandeCongeService demandeCongeService;
 
-    public DemandeCongeController(DemandeCongeService demandeCongeService, UtilisateurRepository utilisateurRepository) {
+    public DemandeCongeController(DemandeCongeService demandeCongeService) {
         this.demandeCongeService = demandeCongeService;
     }
 
@@ -29,12 +27,12 @@ public class DemandeCongeController {
         return demandeCongeService.AnnulerDemande(id);
     }
 
-    @GetMapping("/employe/{id} ")
+    @GetMapping("/employe/{id}")
     public List<DemandeCongeDTO> getDemandesEmploye(@PathVariable Long id){
         return demandeCongeService.getDamandesByEmploye(id);
     }
 
-    @GetMapping("/manager/{id} ")
+    @GetMapping("/manager/{id}")
     public List<DemandeCongeDTO> getDemandesByManager(@PathVariable Long id){
         return demandeCongeService.getDemandesByManager(id);
     }

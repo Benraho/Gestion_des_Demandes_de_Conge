@@ -2,6 +2,7 @@ package com.example.MiniProject.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,11 +24,10 @@ public class SecurityConfig {
                                 "/api/auth/**"
                         ).permitAll()
                         .requestMatchers("/api/conges/employe/**").hasRole("EMPLOYE")
-                        .requestMatchers("/api/conges/approuver/**" , "/api/conges/refuser/**").hasRole("MANAGER")
+                        .requestMatchers("/api/conges/approuver/**" , "/api/conges/refuser/**" ,"/api/historique").hasRole("MANAGER")
                         .anyRequest().hasRole("ADMIN")
 
-        )
-                .csrf(AbstractHttpConfigurer::disable);
+        );
         return http.build();
 }
 }

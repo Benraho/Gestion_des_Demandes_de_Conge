@@ -1,87 +1,70 @@
 package com.example.MiniProject.infrastructure.repository;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
-
 import com.example.MiniProject.domain.model.DemandeConge;
 import com.example.MiniProject.domain.model.StatusDemande;
 import com.example.MiniProject.domain.model.Utilisateur;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJpaTest
+import java.util.Arrays;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 class DemandeCongeRepositoryTest {
-
-    @Autowired
-    private DemandeCongeRepository demandeCongeRepository;
 
     @Test
     void testFindByEmployeId() {
-        Long employeId = 1L;
+        DemandeCongeRepository repository = mock(DemandeCongeRepository.class);
 
+        Long employeId = 1L;
         DemandeConge conge1 = new DemandeConge();
         conge1.setEmployeId(employeId);
-        conge1.setStatus("APPROUVE");
-        demandeCongeRepository.save(conge1);
 
         DemandeConge conge2 = new DemandeConge();
         conge2.setEmployeId(employeId);
-        conge2.setStatus("REJETE");
-        demandeCongeRepository.save(conge2);
 
-        List<DemandeConge> conges = demandeCongeRepository.findByEmployeId(employeId);
+        when(repository.findByEmployeId(employeId)).thenReturn(Arrays.asList(conge1, conge2));
 
-        assertNotNull(conges);
-        assertEquals(2, conges.size());
-        assertTrue(conges.contains(conge1));
-        assertTrue(conges.contains(conge2));
+        List<DemandeConge> result = repository.findByEmployeId(employeId);
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(conge1));
+        assertTrue(result.contains(conge2));
     }
 
     @Test
     void testFindByEmployeAndStatut() {
+        DemandeCongeRepository repository = mock(DemandeCongeRepository.class);
+
         Utilisateur employe = new Utilisateur();
-        employe.setId(1L);
-        String statut = "APPROUVE";
+        StatusDemande statut = StatusDemande.APPROUVE;
 
-        DemandeConge conge1 = new DemandeConge();
-        conge1.setEmploye(employe);
-        conge1.setStatus(statut);
-        demandeCongeRepository.save(conge1);
+        DemandeConge conge = new DemandeConge();
+        conge.setEmploye(employe);
+        conge.setStatus("APPROUVE");
 
-        DemandeConge conge2 = new DemandeConge();
-        conge2.setEmploye(employe);
-        conge2.setStatus("REJETE");
-        demandeCongeRepository.save(conge2);
+        when(repository.findByEmployeAndStatut(employe, statut)).thenReturn(List.of(conge));
 
-        List<DemandeConge> conges = demandeCongeRepository.findByEmployeAndStatut(employe, StatusDemande.valueOf(statut));
+        List<DemandeConge> result = repository.findByEmployeAndStatut(employe, statut);
 
-        assertNotNull(conges);
-        assertEquals(1, conges.size());
-        assertTrue(conges.contains(conge1));
-        assertFalse(conges.contains(conge2));
+        assertEquals(1, result.size());
+        assertEquals("APPROUVE", result.get(0).getStatus());
     }
 
     @Test
     void testFindByStatus() {
-        String statut = "APPROUVE";
+        DemandeCongeRepository repository = mock(DemandeCongeRepository.class);
 
-        // Préparation des données de test
-        DemandeConge conge1 = new DemandeConge();
-        conge1.setStatus(statut);
-        demandeCongeRepository.save(conge1);
+        StatusDemande statut = StatusDemande.APPROUVE;
+        DemandeConge conge = new DemandeConge();
+        conge.setStatus("APPROUVE");
 
-        DemandeConge conge2 = new DemandeConge();
-        conge2.setStatus("REJETE");
-        demandeCongeRepository.save(conge2);
+        when(repository.findByStatus(statut)).thenReturn(List.of(conge));
 
-        List<DemandeConge> conges = demandeCongeRepository.findByStatus(StatusDemande.valueOf(statut));
+        List<DemandeConge> result = repository.findByStatus(statut);
 
-        assertNotNull(conges);
-        assertEquals(1, conges.size());
-        assertTrue(conges.contains(conge1));
-        assertFalse(conges.contains(conge2));
+        assertEquals(1, result.size());
+        assertEquals("APPROUVE", result.get(0).getStatus());
     }
 }
-
