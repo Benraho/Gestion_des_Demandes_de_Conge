@@ -1,120 +1,91 @@
 package com.example.MiniProject.presentation.controller;
 
+import com.example.MiniProject.application.dto.LoginRequestDTO;
+import com.example.MiniProject.application.service.AuthService;
 import com.example.MiniProject.domain.model.Utilisateur;
-import com.example.MiniProject.infrastructure.repository.UtilisateurRepository;
-import com.example.MiniProject.infrastructure.security.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
 
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
-@Import(com.example.MiniProject.config.SecurityConfig.class)
-@WithMockUser
+@AutoConfigureMockMvc(addFilters = false)
 class AuthControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
+    @MockitoBean
+    private AuthService authService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockitoBean
-    private UtilisateurRepository utilisateurRepository;
-
-    @MockitoBean
-    private JwtService jwtService;
-
-    @Test
-    void testRegister() throws Exception {
-        Utilisateur utilisateur = new Utilisateur();
-        utilisateur.setNom("John Doe");
-        utilisateur.setEmail("john@example.com");
-        utilisateur.setMotDePasse("password");
-
-        when(utilisateurRepository.save(any(Utilisateur.class))).thenReturn(utilisateur);
-
-        mockMvc.perform(post("/api/auth/register")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(utilisateur)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Inscription réussite"));
-    }
-
     @Test
     void testLoginSuccess() throws Exception {
-        Utilisateur utilisateur = new Utilisateur();
-        utilisateur.setEmail("john@example.com");
-        utilisateur.setMotDePasse(new BCryptPasswordEncoder().encode("password"));
+        LoginRequestDTO loginRequest = new LoginRequestDTO();
+        loginRequest.setEmail("samira@test.com");
+        loginRequest.setMotDePasse("password");
 
-        when(utilisateurRepository.findByEmail("john@example.com"))
-                .thenReturn(Optional.of(utilisateur));
-        when(jwtService.genrateToken("john@example.com"))
-                .thenReturn("fake-jwt-token");
-
-        String requestBody = """
-                {
-                  "email": "john@example.com",
-                  "motDePasse": "password"
-                }
-                """;
+        when(authService.login(any(LoginRequestDTO.class))).thenReturn("mock-jwt-token");
 
         mockMvc.perform(post("/api/auth/login")
-                        .contentType("application/json")
-                        .content(requestBody))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("fake-jwt-token"));
+                .andExpect(content().string("mock-jwt-token"));
     }
 
     @Test
-    void testLoginWrongPassword() throws Exception {
-        Utilisateur utilisateur = new Utilisateur();
-        utilisateur.setEmail("john@example.com");
-        utilisateur.setMotDePasse(new BCryptPasswordEncoder().encode("password"));
+    void testLoginFailureWrongPassword() throws Exception {
+        LoginRequestDTO loginRequest = new LoginRequestDTO();
+        loginRequest.setEmail("samira@test.com");
+        loginRequest.setMotDePasse("wrong-password");
 
-        when(utilisateurRepository.findByEmail("john@example.com"))
-                .thenReturn(Optional.of(utilisateur));
-
-        String requestBody = """
-                {
-                  "email": "john@example.com",
-                  "motDePasse": "wrongpassword"
-                }
-                """;
+        when(authService.login(any(LoginRequestDTO.class))).thenThrow(new RuntimeException("Mot de passe incorrect"));
 
         mockMvc.perform(post("/api/auth/login")
-                        .contentType("application/json")
-                        .content(requestBody))
-                .andExpect(status().is4xxClientError());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isForbidden());
     }
 
     @Test
     void testLoginUserNotFound() throws Exception {
-        when(utilisateurRepository.findByEmail("unknown@example.com"))
-                .thenReturn(Optional.empty());
+        LoginRequestDTO loginRequest = new LoginRequestDTO();
+        loginRequest.setEmail("notfound@test.com");
+        loginRequest.setMotDePasse("any");
 
-        String requestBody = """
-                {
-                  "email": "unknown@example.com",
-                  "motDePasse": "any"
-                }
-                """;
+        when(authService.login(any(LoginRequestDTO.class))).thenThrow(new RuntimeException("Utilisateur non trouvé"));
 
         mockMvc.perform(post("/api/auth/login")
-                        .contentType("application/json")
-                        .content(requestBody))
-                .andExpect(status().is4xxClientError());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void testRegister() throws Exception {
+        Utilisateur utilisateur = new Utilisateur();
+        utilisateur.setNom("Samira");
+        utilisateur.setEmail("samira@test.com");
+        utilisateur.setMotDePasse("password");
+
+        when(authService.register(any(Utilisateur.class))).thenReturn("Inscription réussite");
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(utilisateur)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Inscription réussite"));
     }
 }
