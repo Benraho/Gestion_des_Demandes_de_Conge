@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface DemandeCongeRepository extends JpaRepository<DemandeConge, Long> {
     List<DemandeConge> findByEmployeId(Long employeId);
-    List<DemandeConge> findByEmployeAndStatut(Utilisateur employe, StatusDemande statut);
+    List<DemandeConge> findByEmployeAndStatus(Utilisateur employe, StatusDemande status);
 
     @Query("SELECT d FROM DemandeConge d WHERE d.status = 'APPROUVE'")
     List<DemandeConge> findByStatus(StatusDemande statusDemande);

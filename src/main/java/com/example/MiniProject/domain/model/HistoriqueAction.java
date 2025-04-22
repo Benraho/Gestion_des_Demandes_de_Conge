@@ -9,7 +9,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
 public class HistoriqueAction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

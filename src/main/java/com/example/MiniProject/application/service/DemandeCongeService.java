@@ -11,7 +11,6 @@ import com.example.MiniProject.infrastructure.repository.DemandeCongeRepository;
 import com.example.MiniProject.infrastructure.repository.HistoriqueActionRepository;
 import com.example.MiniProject.infrastructure.repository.UtilisateurRepository;
 import com.example.MiniProject.infrastructure.security.EmailService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class DemandeCongeService {
     private final DemandeCongeRepository demandeCongeRepository;
     private final UtilisateurRepository utilisateurRepository;
@@ -69,7 +67,7 @@ public class DemandeCongeService {
 
 
         //mise a jour du solde congé
-        Utilisateur user = utilisateurRepository.findById(demande.getEmployeId()).orElseThrow();
+        Utilisateur user = utilisateurRepository.findById(demande.getEmploye().getId()).orElseThrow();
         long nbJours = ChronoUnit.DAYS.between(demande.getDateDebut(), demande.getDateFin()) + 1;
         user.setSoldeConges(user.getSoldeConges() -(int) nbJours);
         utilisateurRepository.save(user);
@@ -99,7 +97,7 @@ public class DemandeCongeService {
 
 
         //Notification
-        Utilisateur user = utilisateurRepository.findById(demande.getEmployeId()).orElseThrow();
+        Utilisateur user = utilisateurRepository.findById(demande.getEmploye().getId()).orElseThrow();
         emailService.envoyerNotification(user.getEmail() , "demande de congé refusée" , " Votre demande de congée a été refusée");
         return demandeCongeMapper.toDTO(saved);
     }
@@ -108,7 +106,7 @@ public class DemandeCongeService {
         List<Utilisateur> employes =utilisateurRepository.findByManagerId(managerId);
         List<Long> employeIds =employes.stream().map(Utilisateur::getId).toList();
 
-        return demandeCongeRepository.findAll().stream().filter(d -> employeIds.contains(d.getEmployeId())).map(demandeCongeMapper::toDTO).collect(Collectors.toList());
+        return demandeCongeRepository.findAll().stream().filter(d -> employeIds.contains(d.getEmploye().getId())).map(demandeCongeMapper::toDTO).collect(Collectors.toList());
     }
 
     public int getSoldeConges(Long id){
@@ -121,7 +119,7 @@ public class DemandeCongeService {
         List<Utilisateur> employes = utilisateurRepository.findByManagerId(managerId);
 
         return employes.stream()
-                .flatMap(employe -> demandeCongeRepository.findByEmployeAndStatut(employe, StatusDemande.APPROUVE).stream())
+                .flatMap(employe -> demandeCongeRepository.findByEmployeAndStatus(employe, StatusDemande.APPROUVE).stream())
                 .map(demandeCongeMapper::toDTO)
                 .collect(Collectors.toList());
     }

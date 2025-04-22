@@ -2,8 +2,6 @@ package com.example.MiniProject.application.service;
 
 import com.example.MiniProject.domain.model.Utilisateur;
 import com.example.MiniProject.infrastructure.repository.UtilisateurRepository;
-import jakarta.validation.constraints.Null;
-import org.hibernate.service.spi.InjectService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

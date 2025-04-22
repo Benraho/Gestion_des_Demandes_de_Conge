@@ -7,7 +7,6 @@ import lombok.Data;
 import java.util.List;
 
 @Entity
-@Data
 public class Utilisateur {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

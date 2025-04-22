@@ -4,7 +4,6 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
-@Data
 public class DemandeCongeDTO {
     private Long id;
     private LocalDate dateDebut;

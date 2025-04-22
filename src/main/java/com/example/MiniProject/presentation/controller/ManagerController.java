@@ -11,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/manager")
 @PreAuthorize("hasRole('MANAGER')")
-@RequiredArgsConstructor
 public class ManagerController {
 
     private final DemandeCongeService demandeCongeService;

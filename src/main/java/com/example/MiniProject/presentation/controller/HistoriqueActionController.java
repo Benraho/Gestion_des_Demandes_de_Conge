@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/historique")
-@RequiredArgsConstructor
 public class HistoriqueActionController {
 
     private final HistoriqueActionService historiqueActionService;

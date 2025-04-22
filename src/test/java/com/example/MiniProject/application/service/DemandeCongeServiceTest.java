@@ -121,7 +121,6 @@ public class DemandeCongeServiceTest {
 
         DemandeConge demande = new DemandeConge();
         demande.setId(demandeId);
-        demande.setEmployeId(employeId);
         demande.setDateDebut(LocalDate.now());
         demande.setDateFin(LocalDate.now().plusDays(2));
 
@@ -157,7 +156,6 @@ public class DemandeCongeServiceTest {
 
         DemandeConge demande = new DemandeConge();
         demande.setId(demandeId);
-        demande.setEmployeId(employeId);
 
         Utilisateur employe = new Utilisateur();
         employe.setId(employeId);
@@ -191,11 +189,9 @@ public class DemandeCongeServiceTest {
         // Simule deux demandes de congés
         DemandeConge conge1 = new DemandeConge();
         conge1.setId(100L);
-        conge1.setEmployeId(10L);
 
         DemandeConge conge2 = new DemandeConge();
         conge2.setId(200L);
-        conge2.setEmployeId(20L);
 
         // Retourne les employés du manager
         when(utilisateurRepository.findByManagerId(managerId)).thenReturn(List.of(employe1, employe2));
@@ -209,7 +205,6 @@ public class DemandeCongeServiceTest {
                     DemandeConge d = invocation.getArgument(0);
                     DemandeCongeDTO dto = new DemandeCongeDTO();
                     dto.setId(d.getId());
-                    dto.setEmployeId(d.getEmployeId());
                     return dto;
                 });
 
@@ -257,7 +252,7 @@ public class DemandeCongeServiceTest {
 
         // Mock des dépendances
         when(utilisateurRepository.findByManagerId(managerId)).thenReturn(List.of(employe));
-        when(demandeCongeRepository.findByEmployeAndStatut(employe, StatusDemande.APPROUVE)).thenReturn(List.of(demande));
+        when(demandeCongeRepository.findByEmployeAndStatus(employe, StatusDemande.APPROUVE)).thenReturn(List.of(demande));
         when(demandeCongeMapper.toDTO(demande)).thenReturn(dto);
 
         List<DemandeCongeDTO> result = demandeCongeService.getCongesApprouvesByManager(managerId);
@@ -265,6 +260,6 @@ public class DemandeCongeServiceTest {
         assertEquals(1, result.size());
         assertEquals(10L, result.get(0).getId());
         verify(utilisateurRepository, times(1)).findByManagerId(managerId);
-        verify(demandeCongeRepository, times(1)).findByEmployeAndStatut(employe, StatusDemande.APPROUVE);
+        verify(demandeCongeRepository, times(1)).findByEmployeAndStatus(employe, StatusDemande.APPROUVE);
     }
 }

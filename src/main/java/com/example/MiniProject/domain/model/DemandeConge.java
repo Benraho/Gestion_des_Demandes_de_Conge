@@ -1,28 +1,26 @@
 package com.example.MiniProject.domain.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
 public class DemandeConge {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long employeId;
     private LocalDate dateDebut;
     private LocalDate dateFin;
     private String status = "EN_ATTENTE";
     private LocalDateTime dateCreation = LocalDateTime.now();
     private String raison;
+
+    @ManyToOne
+    @JoinColumn(name = "employe_id")
     private Utilisateur employe;
 
     public LocalDateTime getDateCreation() {
@@ -63,14 +61,6 @@ public class DemandeConge {
 
     public void setDateDebut(LocalDate dateDebut) {
         this.dateDebut = dateDebut;
-    }
-
-    public Long getEmployeId() {
-        return employeId;
-    }
-
-    public void setEmployeId(Long emplyeId) {
-        this.employeId = emplyeId;
     }
 
     public Long getId() {

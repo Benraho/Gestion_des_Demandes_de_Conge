@@ -17,16 +17,18 @@ class DemandeCongeRepositoryTest {
     void testFindByEmployeId() {
         DemandeCongeRepository repository = mock(DemandeCongeRepository.class);
 
-        Long employeId = 1L;
+        Utilisateur employe = new Utilisateur();
+        employe.setId(1L);
+
         DemandeConge conge1 = new DemandeConge();
-        conge1.setEmployeId(employeId);
+        conge1.setEmploye(employe);
 
         DemandeConge conge2 = new DemandeConge();
-        conge2.setEmployeId(employeId);
+        conge2.setEmploye(employe);
 
-        when(repository.findByEmployeId(employeId)).thenReturn(Arrays.asList(conge1, conge2));
+        when(repository.findByEmployeId(1L)).thenReturn(Arrays.asList(conge1, conge2));
 
-        List<DemandeConge> result = repository.findByEmployeId(employeId);
+        List<DemandeConge> result = repository.findByEmployeId(1L);
 
         assertEquals(2, result.size());
         assertTrue(result.contains(conge1));
@@ -34,19 +36,21 @@ class DemandeCongeRepositoryTest {
     }
 
     @Test
-    void testFindByEmployeAndStatut() {
+    void testFindByEmployeAndStatus() {
         DemandeCongeRepository repository = mock(DemandeCongeRepository.class);
 
+        StatusDemande status =StatusDemande.APPROUVE;
+
         Utilisateur employe = new Utilisateur();
-        StatusDemande statut = StatusDemande.APPROUVE;
+        employe.setId(1L);
 
         DemandeConge conge = new DemandeConge();
         conge.setEmploye(employe);
         conge.setStatus("APPROUVE");
 
-        when(repository.findByEmployeAndStatut(employe, statut)).thenReturn(List.of(conge));
+        when(repository.findByEmployeAndStatus(employe, status)).thenReturn(List.of(conge));
 
-        List<DemandeConge> result = repository.findByEmployeAndStatut(employe, statut);
+        List<DemandeConge> result = repository.findByEmployeAndStatus(employe, status);
 
         assertEquals(1, result.size());
         assertEquals("APPROUVE", result.get(0).getStatus());
@@ -56,13 +60,14 @@ class DemandeCongeRepositoryTest {
     void testFindByStatus() {
         DemandeCongeRepository repository = mock(DemandeCongeRepository.class);
 
-        StatusDemande statut = StatusDemande.APPROUVE;
+        StatusDemande status = StatusDemande.APPROUVE;
+
         DemandeConge conge = new DemandeConge();
         conge.setStatus("APPROUVE");
 
-        when(repository.findByStatus(statut)).thenReturn(List.of(conge));
+        when(repository.findByStatus(status)).thenReturn(List.of(conge));
 
-        List<DemandeConge> result = repository.findByStatus(statut);
+        List<DemandeConge> result = repository.findByStatus(status);
 
         assertEquals(1, result.size());
         assertEquals("APPROUVE", result.get(0).getStatus());
