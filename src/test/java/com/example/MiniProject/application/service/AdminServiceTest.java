@@ -52,12 +52,12 @@ class AdminServiceTest {
     void testUpdateUserRole() {
         Long userId = 1L;
         Utilisateur user = new Utilisateur();
-        user.setRole(Role.EMPLOYE);
+        user.setRole(Role.ROLE_EMPLOYE);
         when(utilisateurRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        adminService.updateUserRole(userId, Role.ADMIN);
+        adminService.updateUserRole(userId, Role.ROLE_ADMIN);
 
-        assertEquals(Role.ADMIN, user.getRole());
+        assertEquals(Role.ROLE_ADMIN, user.getRole());
         verify(utilisateurRepository).save(user);
     }
 

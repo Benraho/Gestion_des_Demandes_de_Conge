@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class AuthService {
 
@@ -22,17 +25,23 @@ public class AuthService {
 
     public String register(Utilisateur utilisateur) {
         utilisateur.setMotDePasse(new BCryptPasswordEncoder().encode(utilisateur.getMotDePasse()));
-        utilisateur.setRole(Role.EMPLOYE);
+        utilisateur.setRole(Role.ROLE_EMPLOYE);
         utilisateurRepository.save(utilisateur);
         return "Inscription réussite";
     }
 
-    public String login(LoginRequestDTO loginRequestDTO) {
+    public Map<String, Object> login(LoginRequestDTO loginRequestDTO) {
         Utilisateur user = utilisateurRepository.findByEmail(loginRequestDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
         if (new BCryptPasswordEncoder().matches(loginRequestDTO.getMotDePasse(), user.getMotDePasse())) {
-            return jwtService.genrateToken(user.getEmail());
+            String token = jwtService.genrateToken(user.getEmail());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("role", user.getRole().name());
+
+            return response;
         }
 
         throw new RuntimeException("Mot de passe incorrect");

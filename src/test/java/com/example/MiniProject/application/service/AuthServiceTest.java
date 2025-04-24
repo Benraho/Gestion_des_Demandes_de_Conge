@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,7 +36,7 @@ class AuthServiceTest {
         String result = authService.register(utilisateur);
 
         assertEquals("Inscription réussite", result);
-        assertEquals(Role.EMPLOYE, utilisateur.getRole());
+        assertEquals(Role.ROLE_EMPLOYE, utilisateur.getRole());
         verify(utilisateurRepository, times(1)).save(any(Utilisateur.class));
     }
 
@@ -44,6 +45,7 @@ class AuthServiceTest {
         Utilisateur utilisateur = new Utilisateur();
         utilisateur.setEmail("test@example.com");
         utilisateur.setMotDePasse(new BCryptPasswordEncoder().encode("123456"));
+        utilisateur.setRole(Role.ROLE_EMPLOYE); // ajoute le rôle ici
 
         LoginRequestDTO request = new LoginRequestDTO();
         request.setEmail("test@example.com");
@@ -52,9 +54,10 @@ class AuthServiceTest {
         when(utilisateurRepository.findByEmail("test@example.com")).thenReturn(Optional.of(utilisateur));
         when(jwtService.genrateToken("test@example.com")).thenReturn("mocked-jwt");
 
-        String token = authService.login(request);
+        Map<String, Object> result = authService.login(request);
 
-        assertEquals("mocked-jwt", token);
+        assertEquals("mocked-jwt", result.get("token"));
+        assertEquals("EMPLOYE", result.get("role"));
         verify(jwtService, times(1)).genrateToken("test@example.com");
     }
 

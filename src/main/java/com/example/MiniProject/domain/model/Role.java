@@ -1,7 +1,7 @@
 package com.example.MiniProject.domain.model;
 
 public enum Role {
-    EMPLOYE,
-    MANAGER,
-    ADMIN
+    ROLE_EMPLOYE,
+    ROLE_MANAGER,
+    ROLE_ADMIN
 }

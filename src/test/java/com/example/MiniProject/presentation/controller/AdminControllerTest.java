@@ -80,7 +80,7 @@ class AdminControllerTest {
     @Test
     void testUpdateRole() throws Exception {
         Long userId = 1L;
-        doNothing().when(adminService).updateUserRole(userId, Role.ADMIN);
+        doNothing().when(adminService).updateUserRole(userId, Role.ROLE_ADMIN);
 
         mockMvc.perform(put("/api/admin/users/{id}", userId)
                         .contentType("application/json")

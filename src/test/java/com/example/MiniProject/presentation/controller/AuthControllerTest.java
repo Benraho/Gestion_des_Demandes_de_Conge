@@ -12,6 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -36,13 +39,19 @@ class AuthControllerTest {
         loginRequest.setEmail("samira@test.com");
         loginRequest.setMotDePasse("password");
 
-        when(authService.login(any(LoginRequestDTO.class))).thenReturn("mock-jwt-token");
+
+        Map<String, Object> mockResponse = new HashMap<>();
+        mockResponse.put("token", "mock-jwt-token");
+        mockResponse.put("role", "ROLE_ADMIN");
+
+        when(authService.login(any(LoginRequestDTO.class))).thenReturn(mockResponse);
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
-                .andExpect(content().string("mock-jwt-token"));
+                .andExpect(jsonPath("$.token").value("mock-jwt-token"))
+                .andExpect(jsonPath("$.role").value("ROLE_ADMIN"));
     }
 
     @Test

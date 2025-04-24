@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -30,7 +32,7 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Connexion réussite"),
             @ApiResponse(responseCode = "403", description = "Utilisateur non trouvé ou mot de passe incorrect")
     })
-    public String login(@RequestBody LoginRequestDTO loginRequestDTO) {
+    public Map<String, Object> login(@RequestBody LoginRequestDTO loginRequestDTO) {
         return authService.login(loginRequestDTO);
     }
 }
