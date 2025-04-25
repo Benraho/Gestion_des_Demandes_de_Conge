@@ -128,6 +128,7 @@ public class DemandeCongeServiceTest {
         employe.setId(employeId);
         employe.setSoldeConges(10);
         employe.setEmail("test@email.com");
+        demande.setEmploye(employe);
 
         DemandeCongeDTO dto = new DemandeCongeDTO();
         dto.setId(demandeId);
@@ -160,6 +161,7 @@ public class DemandeCongeServiceTest {
         Utilisateur employe = new Utilisateur();
         employe.setId(employeId);
         employe.setEmail(email);
+        demande.setEmploye(employe);
 
         DemandeCongeDTO dto = new DemandeCongeDTO();
 
@@ -189,9 +191,12 @@ public class DemandeCongeServiceTest {
         // Simule deux demandes de congés
         DemandeConge conge1 = new DemandeConge();
         conge1.setId(100L);
+        conge1.setEmploye(employe1);
+
 
         DemandeConge conge2 = new DemandeConge();
         conge2.setId(200L);
+        conge2.setEmploye(employe2);
 
         // Retourne les employés du manager
         when(utilisateurRepository.findByManagerId(managerId)).thenReturn(List.of(employe1, employe2));

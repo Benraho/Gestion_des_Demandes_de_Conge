@@ -36,7 +36,7 @@ class AuthServiceTest {
         String result = authService.register(utilisateur);
 
         assertEquals("Inscription réussite", result);
-        assertEquals(Role.ROLE_EMPLOYE, utilisateur.getRole());
+        //assertEquals(Role.ROLE_EMPLOYE, utilisateur.getRole());
         verify(utilisateurRepository, times(1)).save(any(Utilisateur.class));
     }
 
@@ -45,20 +45,20 @@ class AuthServiceTest {
         Utilisateur utilisateur = new Utilisateur();
         utilisateur.setEmail("test@example.com");
         utilisateur.setMotDePasse(new BCryptPasswordEncoder().encode("123456"));
-        utilisateur.setRole(Role.ROLE_EMPLOYE); // ajoute le rôle ici
+        utilisateur.setRole(Role.ROLE_EMPLOYE);
 
         LoginRequestDTO request = new LoginRequestDTO();
         request.setEmail("test@example.com");
         request.setMotDePasse("123456");
 
         when(utilisateurRepository.findByEmail("test@example.com")).thenReturn(Optional.of(utilisateur));
-        when(jwtService.genrateToken("test@example.com")).thenReturn("mocked-jwt");
+        when(jwtService.genrateToken("test@example.com", Role.ROLE_EMPLOYE)).thenReturn("mocked-jwt");
 
         Map<String, Object> result = authService.login(request);
 
         assertEquals("mocked-jwt", result.get("token"));
-        assertEquals("EMPLOYE", result.get("role"));
-        verify(jwtService, times(1)).genrateToken("test@example.com");
+        assertEquals("ROLE_EMPLOYE", result.get("role"));
+        verify(jwtService, times(1)).genrateToken("test@example.com",Role.ROLE_EMPLOYE );
     }
 
     @Test

@@ -4,7 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/conges/employe")
+@RequestMapping("/api/conges/test/employe")
 class EmployeTestController {
     @GetMapping("/{id}")
     public ResponseEntity<String> getEmploye(@PathVariable Long id) {

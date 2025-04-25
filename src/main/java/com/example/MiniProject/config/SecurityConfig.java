@@ -23,7 +23,7 @@ public class SecurityConfig {
                                 "swagger-ui/**",
                                 "swagger-ui.html",
                                 "v3/api-docs/**",
-                                "/api/auth/**"
+                                "/api/auth/login"
                         ).permitAll()
                         .requestMatchers("/api/conges/employe/**").hasRole("EMPLOYE")
                         .requestMatchers("/api/conges/approuver/**" , "/api/conges/refuser/**" ,"/api/historique").hasRole("MANAGER")

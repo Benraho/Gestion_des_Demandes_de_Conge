@@ -25,7 +25,7 @@ public class AuthService {
 
     public String register(Utilisateur utilisateur) {
         utilisateur.setMotDePasse(new BCryptPasswordEncoder().encode(utilisateur.getMotDePasse()));
-        utilisateur.setRole(Role.ROLE_EMPLOYE);
+        //utilisateur.setRole(Role.ROLE_EMPLOYE);
         utilisateurRepository.save(utilisateur);
         return "Inscription réussite";
     }
@@ -35,7 +35,7 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
         if (new BCryptPasswordEncoder().matches(loginRequestDTO.getMotDePasse(), user.getMotDePasse())) {
-            String token = jwtService.genrateToken(user.getEmail());
+            String token = jwtService.genrateToken(user.getEmail(), user.getRole());
 
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);

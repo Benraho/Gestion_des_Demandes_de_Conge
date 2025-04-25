@@ -2,6 +2,7 @@ package com.example.MiniProject.infrastructure.security;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.MiniProject.domain.model.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,13 +25,13 @@ class JwtServiceTest {
     void setUp() {
         // Inject values for the @Value fields
         ReflectionTestUtils.setField(jwtService, "secret", "mySecretKey12345678901234567890123456789012");
-        ReflectionTestUtils.setField(jwtService, "expiration", 3600000L); // 1 hour in milliseconds
+        ReflectionTestUtils.setField(jwtService, "expiration", 3600000L);
     }
 
     @Test
     void testGenerateToken() {
         String email = "test@example.com";
-        String token = jwtService.genrateToken(email);
+        String token = jwtService.genrateToken(email,Role.ROLE_EMPLOYE);
 
         assertNotNull(token);
 

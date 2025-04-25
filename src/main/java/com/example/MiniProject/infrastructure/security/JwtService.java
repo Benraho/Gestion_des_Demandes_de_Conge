@@ -1,4 +1,5 @@
 package com.example.MiniProject.infrastructure.security;
+import com.example.MiniProject.domain.model.Role;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -17,13 +18,14 @@ public class JwtService {
     @Value("${spring.security.jwt.expiration}")
     private Long expiration;
 
-    public  String genrateToken(String email){
+    public  String genrateToken(String email , Role role){
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expiration);
         Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
         return Jwts.builder()
                 .setSubject(email)
+                .claim("role", role)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
