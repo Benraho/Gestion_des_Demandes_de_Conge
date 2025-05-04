@@ -36,7 +36,7 @@ public class AdminService {
     }
 
     public void updateUserRole(Long id , Role role){
-        Utilisateur user = utilisateurRepository.findById(id).orElseThrow();
+        Utilisateur user = utilisateurRepository.findById(id).orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));;
         user.setRole(role);
         utilisateurRepository.save(user);
     }

@@ -25,7 +25,7 @@ public class AdminController {
     }
 
     //crée un utilisateur
-    @PostMapping("/users")
+    @PostMapping("/user")
     public Utilisateur createUser(@RequestBody Utilisateur user){
         return adminService.createUser(user);
     }

@@ -1,7 +1,6 @@
 package com.example.MiniProject.domain.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +14,8 @@ public class DemandeConge {
 
     private LocalDate dateDebut;
     private LocalDate dateFin;
-    private String status = "EN_ATTENTE";
+    @Enumerated(EnumType.STRING)
+    private StatusDemande status;
     private LocalDateTime dateCreation = LocalDateTime.now();
     private String raison;
 
@@ -31,11 +31,11 @@ public class DemandeConge {
         this.dateCreation = dateCreation;
     }
 
-    public String getStatus() {
+    public StatusDemande getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusDemande status) {
         this.status = status;
     }
 

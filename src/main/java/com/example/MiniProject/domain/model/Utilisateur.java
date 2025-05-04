@@ -1,6 +1,7 @@
 package com.example.MiniProject.domain.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,10 +23,12 @@ public class Utilisateur {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="manager_id")
     private Utilisateur manager;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "manager")
     private List<Utilisateur> employes;
 

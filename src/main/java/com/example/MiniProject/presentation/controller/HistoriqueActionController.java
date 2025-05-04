@@ -21,6 +21,6 @@ public class HistoriqueActionController {
     // Récupérer tous les historiques d'action
     @GetMapping
     public List<HistoriqueAction> getAllActions() {
-        return historiqueActionService.getAll();
+        return historiqueActionService.getHistoriquePourUtilisateur();
     }
 }

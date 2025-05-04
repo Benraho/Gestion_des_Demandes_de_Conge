@@ -46,14 +46,14 @@ class DemandeCongeRepositoryTest {
 
         DemandeConge conge = new DemandeConge();
         conge.setEmploye(employe);
-        conge.setStatus("APPROUVE");
+        conge.setStatus(StatusDemande.APPROUVE);
 
         when(repository.findByEmployeAndStatus(employe, status)).thenReturn(List.of(conge));
 
         List<DemandeConge> result = repository.findByEmployeAndStatus(employe, status);
 
         assertEquals(1, result.size());
-        assertEquals("APPROUVE", result.get(0).getStatus());
+        assertEquals(StatusDemande.APPROUVE, result.get(0).getStatus());
     }
 
     @Test
@@ -63,13 +63,13 @@ class DemandeCongeRepositoryTest {
         StatusDemande status = StatusDemande.APPROUVE;
 
         DemandeConge conge = new DemandeConge();
-        conge.setStatus("APPROUVE");
+        conge.setStatus(StatusDemande.APPROUVE);
 
         when(repository.findByStatus(status)).thenReturn(List.of(conge));
 
         List<DemandeConge> result = repository.findByStatus(status);
 
         assertEquals(1, result.size());
-        assertEquals("APPROUVE", result.get(0).getStatus());
+        assertEquals(StatusDemande.APPROUVE, result.get(0).getStatus());
     }
 }

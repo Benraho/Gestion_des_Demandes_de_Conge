@@ -11,6 +11,7 @@ import com.example.MiniProject.infrastructure.repository.DemandeCongeRepository;
 import com.example.MiniProject.infrastructure.repository.HistoriqueActionRepository;
 import com.example.MiniProject.infrastructure.repository.UtilisateurRepository;
 import com.example.MiniProject.infrastructure.security.EmailService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
@@ -36,19 +37,26 @@ public class DemandeCongeService {
         this.demandeCongeMapper = demandeCongeMapper;
     }
 
-    public DemandeCongeDTO creeDemande(DemandeCongeDTO dto){
+    public DemandeCongeDTO creeDemande(DemandeCongeDTO dto) {
         DemandeConge entity = demandeCongeMapper.toEntity(dto);
-        entity.setStatus("EN_ATTENTE");
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Utilisateur employe = utilisateurRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        entity.setEmploye(employe);
+
+        entity.setStatus(StatusDemande.EN_ATTENTE);
         return demandeCongeMapper.toDTO(demandeCongeRepository.save(entity));
     }
-
     public DemandeCongeDTO AnnulerDemande(Long id){
         DemandeConge demande = demandeCongeRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Demande non trouvée"));
         if(!demande.getStatus().equals("EN_ATTENTE")) {
             throw new RuntimeException("Impossible d'annuler une demande déja traitée");
         }
-        demande.setStatus(String.valueOf(StatusDemande.ANNULEE));
+        demande.setStatus(StatusDemande.ANNULEE);
         demandeCongeRepository.save(demande);
         return demandeCongeMapper.toDTO(demande);
     }
@@ -62,7 +70,7 @@ public class DemandeCongeService {
 
     public DemandeCongeDTO approuverDemande(Long id){
         DemandeConge demande =demandeCongeRepository.findById(id).orElseThrow();
-        demande.setStatus("APPROUVE");
+        demande.setStatus(StatusDemande.APPROUVE);
         DemandeConge saved = demandeCongeRepository.save(demande);
 
 
@@ -85,7 +93,7 @@ public class DemandeCongeService {
 
     public DemandeCongeDTO refuserDemande(Long id){
         DemandeConge demande =demandeCongeRepository.findById(id).orElseThrow();
-        demande.setStatus("REFUSE");
+        demande.setStatus(StatusDemande.REFUSEE);
         DemandeConge saved = demandeCongeRepository.save(demande);
 
         //historique
@@ -122,6 +130,12 @@ public class DemandeCongeService {
                 .flatMap(employe -> demandeCongeRepository.findByEmployeAndStatus(employe, StatusDemande.APPROUVE).stream())
                 .map(demandeCongeMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+    public List<DemandeCongeDTO> getCongesApprouvesByManagerConnecte() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Utilisateur manager = utilisateurRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Manager non trouvé"));
+        return getCongesApprouvesByManager(manager.getId());
     }
 
 }

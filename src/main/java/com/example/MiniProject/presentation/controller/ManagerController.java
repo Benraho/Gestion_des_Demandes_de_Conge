@@ -33,8 +33,12 @@ public class ManagerController {
     }
 
 
-    @GetMapping("/conges-approuves/{managerId}")
-    public List<DemandeCongeDTO> getCongesApprouves(@PathVariable Long managerId) {
-        return demandeCongeService.getCongesApprouvesByManager(managerId);
+//    @GetMapping("/conges-approuves/{managerId}")
+//    public List<DemandeCongeDTO> getCongesApprouves(@PathVariable Long managerId) {
+//        return demandeCongeService.getCongesApprouvesByManager(managerId);
+//    }
+    @GetMapping("/conges-approuves")
+    public List<DemandeCongeDTO> getCongesApprouves() {
+        return demandeCongeService.getCongesApprouvesByManagerConnecte();
     }
 }

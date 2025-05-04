@@ -1,6 +1,6 @@
 package com.example.MiniProject.application.dto;
 
-import lombok.Data;
+import com.example.MiniProject.domain.model.StatusDemande;
 
 import java.time.LocalDate;
 
@@ -8,7 +8,7 @@ public class DemandeCongeDTO {
     private Long id;
     private LocalDate dateDebut;
     private LocalDate dateFin;
-    private String statut;
+    private StatusDemande statut;
     private Long employeId;
     private String raison;
 
@@ -20,11 +20,11 @@ public class DemandeCongeDTO {
         this.employeId = employeId;
     }
 
-    public String getStatut() {
+    public StatusDemande getStatut() {
         return statut;
     }
 
-    public void setStatut(String statut) {
+    public void setStatut(StatusDemande statut) {
         this.statut = statut;
     }
 

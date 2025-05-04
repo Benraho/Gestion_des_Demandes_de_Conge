@@ -61,7 +61,7 @@ public class DemandeCongeServiceTest {
         demandeCongeDTO.setRaison("Vacances");
 
         DemandeConge demande =new DemandeConge();
-        demande.setStatus("EN_ATTENTE");
+        demande.setStatus(StatusDemande.EN_ATTENTE);
 
         when(demandeCongeMapper.toEntity(demandeCongeDTO)).thenReturn(demande);
         when(demandeCongeRepository.save(any(DemandeConge.class))).thenReturn(demande);
@@ -80,7 +80,7 @@ public class DemandeCongeServiceTest {
 
         DemandeConge demande = new DemandeConge();
         demande.setId(demandeId);
-        demande.setStatus("EN_ATTENTE");
+        demande.setStatus(StatusDemande.EN_ATTENTE);
 
         DemandeCongeDTO dto = new DemandeCongeDTO();
         dto.setId(demandeId);
@@ -104,7 +104,7 @@ public class DemandeCongeServiceTest {
         DemandeConge demande = new DemandeConge();
         demande.setId(1L);
         demande.setEmploye(employe);
-        demande.setStatus("EN_ATTENTE");
+        demande.setStatus(StatusDemande.EN_ATTENTE);
 
         when(demandeCongeRepository.findByEmployeId(1L)).thenReturn(Collections.singletonList(demande));
 
@@ -249,7 +249,7 @@ public class DemandeCongeServiceTest {
         DemandeConge demande = new DemandeConge();
         demande.setId(10L);
         demande.setEmploye(employe);
-        demande.setStatus(StatusDemande.APPROUVE.name());
+        demande.setStatus(StatusDemande.APPROUVE);
 
         // DTO attendu
         DemandeCongeDTO dto = new DemandeCongeDTO();

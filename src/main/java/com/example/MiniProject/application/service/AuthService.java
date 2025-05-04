@@ -1,7 +1,6 @@
 package com.example.MiniProject.application.service;
 
 import com.example.MiniProject.application.dto.LoginRequestDTO;
-import com.example.MiniProject.domain.model.Role;
 import com.example.MiniProject.domain.model.Utilisateur;
 import com.example.MiniProject.infrastructure.repository.UtilisateurRepository;
 import com.example.MiniProject.infrastructure.security.JwtService;
@@ -25,7 +24,6 @@ public class AuthService {
 
     public String register(Utilisateur utilisateur) {
         utilisateur.setMotDePasse(new BCryptPasswordEncoder().encode(utilisateur.getMotDePasse()));
-        //utilisateur.setRole(Role.ROLE_EMPLOYE);
         utilisateurRepository.save(utilisateur);
         return "Inscription réussite";
     }
@@ -40,6 +38,7 @@ public class AuthService {
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("role", user.getRole().name());
+            response.put("userId", user.getId());
 
             return response;
         }
